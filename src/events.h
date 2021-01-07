@@ -108,6 +108,11 @@ class Events
 		void eventMonsterOnDropLoot(Monster* monster, Container* corpse);
 		bool eventMonsterOnSpawn(Monster* monster, const Position& position, bool startup, bool artificial);
 
+		////////////////////////////////
+		int32_t getScriptIdOnHear() {
+			return info.creatureOnHear;
+		};
+
 	private:
 		LuaScriptInterface scriptInterface;
 		EventsInfo info;
