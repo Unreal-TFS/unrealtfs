@@ -965,27 +965,28 @@ void Combat::doAreaCombat(Creature* caster, const Position& position, const Area
 
 void Combat::checkLeech(Player* caster, CombatDamage& damage)
 {
-	if (caster->getHealth() < caster->getMaxHealth()) {
-		uint16_t chance = caster->getSpecialSkill(SPECIALSKILL_LIFELEECHCHANCE);
-		uint16_t skill = caster->getSpecialSkill(SPECIALSKILL_LIFELEECHAMOUNT);
-		if (skill != 0 && chance != 0 && normal_random(1, 100) <= chance) {
-			CombatDamage healAmount;
-			healAmount.primary.value += std::round(std::abs(damage.primary.value) * (skill / 100.));
-			healAmount.secondary.value += std::round(std::abs(damage.secondary.value) * (skill / 100.));
-			g_game.combatChangeHealth(nullptr, caster, healAmount);
-			caster->sendMagicEffect(caster->getPosition(), CONST_ME_MAGIC_RED);
-		}
-	}
+	const int32_t& totalDamage = std::abs(damage.primary.value) + std::abs(damage.secondary.value);
+	CombatDamage leechCombat;
+	leechCombat.origin = ORIGIN_NONE;
+	leechCombat.leeched = true;
 
 	if (caster->getMana() < caster->getMaxMana()) {
 		uint16_t chance = caster->getSpecialSkill(SPECIALSKILL_MANALEECHCHANCE);
 		uint16_t skill = caster->getSpecialSkill(SPECIALSKILL_MANALEECHAMOUNT);
 		if (skill != 0 && chance != 0 && normal_random(1, 100) <= chance) {
-			CombatDamage manaAmount;
-			manaAmount.primary.value += std::round(std::abs(damage.primary.value) * (skill / 100.));;
-			manaAmount.secondary.value += std::round(std::abs(damage.secondary.value) * (skill / 100.));;
-			g_game.combatChangeMana(nullptr, caster, manaAmount);
+			leechCombat.primary.value = std::round(totalDamage * (skill / 100.));
+			g_game.combatChangeMana(nullptr, caster, leechCombat);
 			caster->sendMagicEffect(caster->getPosition(), CONST_ME_MAGIC_BLUE);
+		}
+	}
+
+	if (caster->getHealth() < caster->getMaxHealth()) {
+		uint16_t chance = caster->getSpecialSkill(SPECIALSKILL_LIFELEECHCHANCE);
+		uint16_t skill = caster->getSpecialSkill(SPECIALSKILL_LIFELEECHAMOUNT);
+		if (skill != 0 && chance != 0 && normal_random(1, 100) <= chance) {
+			leechCombat.primary.value = std::round(totalDamage * (skill / 100.));
+			g_game.combatChangeHealth(nullptr, caster, leechCombat);
+			caster->sendMagicEffect(caster->getPosition(), CONST_ME_MAGIC_RED);
 		}
 	}
 }
