@@ -2120,6 +2120,7 @@ void Player::despawn()
 		return;
 	}
 
+	// stop walking correctly
 	sendCancelWalk();
 	onWalkComplete();
 	stopEventWalk();
