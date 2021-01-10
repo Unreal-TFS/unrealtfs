@@ -2120,10 +2120,9 @@ void Player::despawn()
 		return;
 	}
 
-	// stop walking correctly
-	sendCancelWalk();
-	onWalkComplete();
+	listWalkDir.clear();
 	stopEventWalk();
+	onWalkAborted();
 
 	// remove check
 	g_game.removeCreatureCheck(this);
