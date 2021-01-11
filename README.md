@@ -1,4 +1,4 @@
-unrealtfs [![Build Status](https://travis-ci.com/Unreal-TFS/forgottenserver.svg?branch=master)](https://travis-ci.com/github/Unreal-TFS/forgottenserver "Travis CI status") [![Build status](https://ci.appveyor.com/api/projects/status/j04b5320bmsfw2g2?svg=true)](https://ci.appveyor.com/project/MillhioreBT/unrealtfs "Download builds for Windows")
+unrealtfs [![Build Status](https://travis-ci.com/Unreal-TFS/unrealtfs.svg?branch=master)](https://travis-ci.com/github/Unreal-TFS/unrealtfs "Travis CI status") [![Build status](https://ci.appveyor.com/api/projects/status/j04b5320bmsfw2g2?svg=true)](https://ci.appveyor.com/project/MillhioreBT/unrealtfs "Download builds for Windows")
 ===============
 
 ```diff
