@@ -167,6 +167,7 @@ class Game
 		  * \returns A Pointer to the player
 		  */
 		Player* getPlayerByName(const std::string& s);
+		Player* getTmpPlayerByName(const std::string& s);
 
 		/**
 		  * Returns a player based on guid
@@ -473,6 +474,9 @@ class Game
 		void addPlayer(Player* player);
 		void removePlayer(Player* player);
 
+		void addTmpPlayer(Player* player);
+		void removeTmpPlayer(Player* player);
+
 		void addNpc(Npc* npc);
 		void removeNpc(Npc* npc);
 
@@ -531,6 +535,7 @@ class Game
 
 		std::unordered_map<uint32_t, Player*> players;
 		std::unordered_map<std::string, Player*> mappedPlayerNames;
+		std::unordered_map<std::string, Player*> tmpPlayerNames;
 		std::unordered_map<uint32_t, Player*> mappedPlayerGuids;
 		std::unordered_map<uint32_t, Guild*> guilds;
 		std::unordered_map<uint16_t, Item*> uniqueItems;

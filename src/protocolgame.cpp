@@ -59,8 +59,14 @@ void ProtocolGame::login(const std::string& name, uint32_t accountId, OperatingS
 	//dispatcher thread
 	Player* foundPlayer = g_game.getPlayerByName(name);
 	if (!foundPlayer || g_config.getBoolean(ConfigManager::ALLOW_CLONES)) {
-		player = new Player(getThis());
-		player->setName(name);
+		Player* tmpPlayer = g_game.getTmpPlayerByName(name);
+		if (tmpPlayer) {
+			player = tmpPlayer;
+			player->client = getThis();
+		} else {
+			player = new Player(getThis());
+			player->setName(name);
+		}
 
 		player->incrementReferenceCounter();
 		player->setID();
