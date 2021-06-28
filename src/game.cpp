@@ -5607,6 +5607,7 @@ void Game::addPlayer(Player* player)
 	mappedPlayerGuids[player->getGUID()] = player;
 	wildcardTree.insert(lowercase_name);
 	players[player->getID()] = player;
+	removeTmpPlayer(player);
 }
 
 void Game::removePlayer(Player* player)
@@ -5616,6 +5617,32 @@ void Game::removePlayer(Player* player)
 	mappedPlayerGuids.erase(player->getGUID());
 	wildcardTree.remove(lowercase_name);
 	players.erase(player->getID());
+}
+
+// Load Temp Players
+void Game::addTmpPlayer(Player* player)
+{
+	const std::string& lowercase_name = asLowerCaseString(player->getName());
+	tmpPlayerNames[lowercase_name] = player;
+}
+
+void Game::removeTmpPlayer(Player* player)
+{
+	const std::string& lowercase_name = asLowerCaseString(player->getName());
+	tmpPlayerNames.erase(lowercase_name);
+}
+
+Player* Game::getTmpPlayerByName(const std::string& s)
+{
+	if (s.empty()) {
+		return nullptr;
+	}
+
+	auto it = tmpPlayerNames.find(asLowerCaseString(s));
+	if (it == tmpPlayerNames.end()) {
+		return nullptr;
+	}
+	return it->second;
 }
 
 void Game::addNpc(Npc* npc)

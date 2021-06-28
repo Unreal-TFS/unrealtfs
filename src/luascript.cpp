@@ -7835,8 +7835,9 @@ int LuaScriptInterface::luaCreatureGetZone(lua_State* L)
 // Player
 int LuaScriptInterface::luaPlayerCreate(lua_State* L)
 {
-	// Player(id or guid or name or userdata)
+	// Player(id or guid or name or userdata[, loadOffline = false])
 	Player* player;
+	bool loadOffline = getBoolean(L, 3);
 	if (isNumber(L, 2)) {
 		uint32_t id = getNumber<uint32_t>(L, 2);
 		if (id >= 0x10000000 && id <= Player::playerAutoID) {
@@ -7847,9 +7848,13 @@ int LuaScriptInterface::luaPlayerCreate(lua_State* L)
 	} else if (isString(L, 2)) {
 		ReturnValue ret = g_game.getPlayerByNameWildcard(getString(L, 2), player);
 		if (ret != RETURNVALUE_NOERROR) {
-			lua_pushnil(L);
-			lua_pushnumber(L, ret);
-			return 2;
+			if (loadOffline) {
+				player = nullptr;
+			} else {
+				lua_pushnil(L);
+				lua_pushnumber(L, ret);
+				return 2;
+			}
 		}
 	} else if (isUserdata(L, 2)) {
 		if (getUserdataType(L, 2) != LuaData_Player) {
@@ -7864,6 +7869,25 @@ int LuaScriptInterface::luaPlayerCreate(lua_State* L)
 	if (player) {
 		pushUserdata<Player>(L, player);
 		setMetatable(L, -1, "Player");
+	} else if (loadOffline) {
+		if (isString(L, 2)) {
+			const std::string& name = getString(L, 2);
+			player = g_game.getTmpPlayerByName(name);
+			if (!player) {
+				player = new Player(nullptr);
+				if (!IOLoginData::loadPlayerByName(player, name)) {
+					player = nullptr;
+					lua_pushnil(L);
+					return 1;
+				}
+				g_game.addTmpPlayer(player);
+			}
+			pushUserdata<Player>(L, player);
+			setMetatable(L, -1, "Player");
+			return 1;
+		} else {
+			lua_pushnil(L);
+		}
 	} else {
 		lua_pushnil(L);
 	}
@@ -9635,7 +9659,9 @@ int LuaScriptInterface::luaPlayerSave(lua_State* L)
 	// player:save()
 	Player* player = getUserdata<Player>(L, 1);
 	if (player) {
-		player->loginPosition = player->getPosition();
+		if (!player->isOffline()) {
+			player->loginPosition = player->getPosition();
+		}
 		pushBoolean(L, IOLoginData::savePlayer(player));
 	} else {
 		lua_pushnil(L);
