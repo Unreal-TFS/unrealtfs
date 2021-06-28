@@ -171,6 +171,12 @@ class QTreeLeafNode final : public QTreeNode
   * Holds all the actual map-data
   */
 
+enum SightTileState : uint8_t {
+	SIGHTTILESTATE_CLEARED,
+	SIGHTTILESTATE_BLOCKED,
+	SIGHTTILESTATE_FIELD,
+};
+
 class Map
 {
 	public:
